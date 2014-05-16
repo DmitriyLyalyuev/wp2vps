@@ -40,4 +40,3 @@
 
 - name: unpack WordPress installation
   shell: "tar xvfz /tmp/latest.tar.gz -C {{ wpdirectory }} && chown -R www-data:www-data {{ wpdirectory }}"
-
