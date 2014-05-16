@@ -1,0 +1,20 @@
+- name: install php5
+  apt: pkg={{ item }}
+  with_items:
+    - php5
+    - php5-cgi
+    - php5-fpm
+    - php5-memcache
+    - php5-memcached
+    - php5-mcrypt
+    - php5-mysql
+    - php5-gd
+    - php5-curl
+    - php5-xmlrpc
+
+- name: change listen socket
+  lineinfile:
+    dest: '/etc/php5/fpm/pool.d/www.conf'
+    insertafter: 'listen = 127.0.0.1:9000'
+    line: 'listen = /var/run/fpm.socket'
+  notify: restart php5-fpm

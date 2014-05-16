@@ -1,0 +1,43 @@
+- name: creating database
+  mysql_db:
+    name: "{{ db_name }}"
+    state: "present"
+    login_user: "root"
+    login_password: "{{ mysql_root_password }}"
+
+- name: creating database user
+  mysql_user:
+    name: "{{ db_user }}"
+    password: "{{ db_password }}"
+    priv: "{{ db_name }}.*:ALL"
+    state: "present"
+    login_user: "root"
+    login_password: "{{ mysql_root_password }}"
+
+- name: install nginx configuration
+  template:
+    src: wordpress.conf
+    dest: /etc/nginx/sites-available/wordpress.conf
+  notify: restart nginx
+
+- name: activate site configuration
+  file:
+    src: '/etc/nginx/sites-available/wordpress.conf'
+    dest: '/etc/nginx/sites-enabled/wordpress.conf'
+    state: 'link'
+
+- name: download WordPress
+  get_url:
+    url: "{{ download_url }}"
+    dest: "/tmp/latest.tar.gz"
+
+- name: creating directory for WordPress
+  file:
+    path: "{{ wpdirectory }}"
+    state: "directory"
+    owner: "www-data"
+    group: "www-data"
+
+- name: unpack WordPress installation
+  shell: "tar xvfz /tmp/latest.tar.gz -C {{ wpdirectory }} && chown -R www-data:www-data {{ wpdirectory }}"
+

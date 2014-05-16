@@ -1,0 +1,22 @@
+- name: Add GPG key for repository
+  command: apt-key adv --keyserver keyserver.ubuntu.com --recv CD2EFD2A
+
+- name: Add Percona repository
+  shell:
+    echo "deb http://repo.percona.com/apt {{ ansible_lsb['codename'] }} main" | tee /etc/apt/sources.list.d/percona.list
+    creates=/etc/apt/sources.list.d/percona.list
+
+- name: Install Percona MySQL server
+  apt:
+    pkg: "{{ item }}"
+    update_cache: true
+  with_items:
+    - percona-server-server-5.5
+    - percona-server-client-5.5
+    - python-mysqldb
+
+- name: Change root password (fail is not a problem)
+  mysql_user:
+    name: root
+    password: "{{ mysql_root_password}}"
+  ignore_errors: yes

@@ -1,0 +1,2 @@
+[appservers-php]
+example.com ansible_ssh_host=10.0.0.2 ansible_ssh_user=vagrant
